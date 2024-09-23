@@ -87,7 +87,7 @@ dplyr::filter(penguins, body_mass_g == 4400,
 dplyr::filter(penguins, body_mass_g == 4400,
               !species %in% c("Adelie", "Chinstrap"))
 
-# Cette commande est l'equivalente de 
+# Autre maniere d'obtenir le meme resultat 
 dplyr::filter(penguins, body_mass_g == 4400, species == "Gentoo")
 
 # La selection peut se faire a l'aide d'operateurs logiques :
