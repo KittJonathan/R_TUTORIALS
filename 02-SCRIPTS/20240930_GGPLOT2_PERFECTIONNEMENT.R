@@ -7,7 +7,7 @@
 
 install.packages("tidyverse")  # manipulation, visualisation
 install.packages("palmerpenguins")  # jeux de donnees
-install.packages("ggstatsplot")  # representer des tests stats
+# install.packages("ggstatsplot")  # representer des tests stats
 # install.packages("skimr")  # synthese des donnees
 # install.packages("janitor")  # nettoyage des donnees
 # install.packages("glue")  # evaluer du code et l'inserer dans du texte
@@ -19,7 +19,7 @@ library(palmerpenguins)
 # library(skimr)
 # library(janitor)
 # library(glue)
-library(ggstatsplot)
+# library(ggstatsplot)
 
 pacman::p_load(tidyverse, palmerpenguins, skimr, janitor, glue)
 
@@ -32,6 +32,70 @@ pacman::p_load(tidyverse, palmerpenguins, skimr, janitor, glue)
 # Pour ce tutoriel de perfecionnement nous allons utiliser les donnees brutes.
 
 penguins <- palmerpenguins::penguins
+
+# 📊 SCATTER PLOT SIMPLE --------------------------------------------------
+
+# Nous allons partir d'un scatter plot simple et voir commment modifier les
+# differents parametres : 
+
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point() +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  theme_bw()
+
+# 🎨 COULEURS -------------------------------------------------------------
+
+# ggplot2 attribue par defaut des couleurs au plot, en fonction de
+# palettes predefinies.
+
+# Ces palettes peuvent etre affichees a l'aide de la fonction 
+# diplay.brewer.all() du package {RColorBrewer} :
+
+RColorBrewer::display.brewer.all()
+
+# Les fonctions scale_color_brewer(palette = "...") et
+# scale_fill_brewer(palette = "...") permettent d'utiliser les differentes
+# palettes : 
+
+p + scale_color_brewer(palette = "Set1")
+p + scale_color_brewer(palette = "Set2")
+p + scale_color_brewer(palette = "Set3")
+p + scale_color_brewer(palette = "Pastel1")
+p + scale_color_brewer(palette = "Pastel2")
+p + scale_color_brewer(palette = "Paired")
+p + scale_color_brewer(palette = "Dark2")
+p + scale_color_brewer(palette = "Accent")
+
+# Les fonctions scale_color_manual() et scale_fill_manual() permettent de 
+# definir soi-meme les couleurs a utiliser : 
+
+p + scale_color_manual(values = c("darkorange", "cyan4", "purple"))
+
+# Par defaut, les couleurs sont appliquees aux niveaux de la variable 
+# qualitative definie dans aes(color = ...), dans l'ordre alphabetique.
+
+levels(penguins$species)
+
+# Les figures de la page web du package {palmerpenguins} 
+# (https://allisonhorst.github.io/palmerpenguins/) utilisent les trois couleurs
+# suivantes : 
+# 'darkorange' pour l'espece Adelie
+# 'purple' pour l'espece Chinstrap
+# 'cyan4' pour l'espece Gentoo
+
+# Pour definir une couleur par niveau : 
+
+p + scale_color_manual(values = c("Adelie" = "darkorange",
+                                  "Chinstrap" = "purple",
+                                  "Gentoo" = "cyan4"))
 
 # EN VRAC ----
 
