@@ -97,6 +97,182 @@ p + scale_color_manual(values = c("Adelie" = "darkorange",
                                   "Chinstrap" = "purple",
                                   "Gentoo" = "cyan4"))
 
+# Il est possible de definir un vecteur de couleurs et d'utiliser ce dernier : 
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+p + scale_color_manual(values = my_cols)
+
+# ➕ COMBINER PLUSIEURS TYPES DE REPRESENTATION ----------------------------
+
+# Creons un boxplot de la variable 'bill_length_mm' par espece.
+
+penguins |> 
+  ggplot(aes(x = species, y = bill_length_mm,
+             fill = species, color = species)) +
+  geom_boxplot(width = 0.5) +
+  labs(title = "Repartition de longueur du bec par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Longueur du bec (mm)") +
+  theme_bw()
+
+# Ajoutons de la transparence pour voir les quartiles : 
+
+penguins |> 
+  ggplot(aes(x = species, y = bill_length_mm,
+             fill = species, color = species)) +
+  geom_boxplot(width = 0.5, alpha = 0.5) +
+  labs(title = "Repartition de longueur du bec par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Longueur du bec (mm)") +
+  theme_bw()
+
+# La legende n'est pas utile, nous la supprimons a l'aide de
+# l'argument 'show.legend = FALSE). Nous stockons le code dans 
+# un objet 'bp' :
+
+bp <- penguins |> 
+  ggplot(aes(x = species, y = bill_length_mm,
+             fill = species, color = species)) +
+  geom_boxplot(width = 0.5, alpha = 0.5,
+               show.legend = FALSE) +
+  labs(title = "Repartition de longueur du bec par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Longueur du bec (mm)") +
+  theme_bw()
+
+# Ajoutons nos couleurs ainsi que de la transparence : 
+
+bp +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols)
+
+# Nous souhaitons afficher en plus des boxplots les observations
+# sous forme de points pour mettre en evidence la distribution :
+
+bp +
+  geom_point(alpha = 0.25, show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols)
+
+# Pour distinguer les points qui sont superposes, nous pouvons
+# utiliser la fonction geom_jitter() a la place de geom_point() : 
+
+bp +
+  geom_jitter(alpha = 0.25, show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols)
+
+# L'argument 'width = ...' permet de modifier la largeur du 
+# nuage de points :
+
+bp +
+  geom_jitter(alpha = 0.25, width = 0.2, show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols)
+
+# 🔃 GESTION DES FACTEURS -------------------------------------------------
+
+# Commencons par recreer le plot precedent : 
+
+penguins |> 
+  ggplot(aes(x = species, y = bill_length_mm,
+             fill = species, color = species)) +
+  geom_boxplot(width = 0.5, alpha = 0.5,
+               show.legend = FALSE) +
+  geom_jitter(alpha = 0.25, width = 0.2, show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols) +
+  labs(title = "Repartition de longueur du bec par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Longueur du bec (mm)") +
+  theme_bw()
+
+# Par defaut, les niveaux de la variable qualitative 'species' sont 
+# tries par ordre alphabetique.
+# Pour rendre la lecture du plot plus aisee, nous souhaitons trier les
+# niveaux (les especes) par ordre decroissant de la mediane de la variable
+# quantitative 'bill_length_mm'.
+
+# Nous allons pour cela tirer profit des fonctions fct_*() du package
+# {forcats}, qui permettent de redefinir les niveaux d'un facteur (d'une
+# variable qualitative, ou categorielle).
+
+# Quels sont les niveaux actuels de cette variable ?
+levels(penguins$species)
+
+# Calculons la mediane de la variable 'bill_length_mm' pour chaque espece :
+penguins |> 
+  summarise(bill_length_mm_median = median(bill_length_mm, na.rm = TRUE),
+            .by = species) |> 
+  arrange(-bill_length_mm_median)
+
+# Pour ce qui est de la mediane, les niveaux de la variable qualitative 'species'
+# sont les suivants : Adelie < Gentoo < Chinstrap.
+
+# Pour utiliser cet ordre directement dans le code du plot, nous utilisons la fonction
+# fct_reorder() : 
+
+levels(
+  fct_reorder(.f = penguins$species,  # le facteur a trier
+              .x = penguins$bill_length_mm,  # la variable par laquelle trier
+              .fun = median,  # la fonction utilisee pour le tri
+              .na_rm = TRUE))  # supprimer les donnees manquantes
+
+# L'argument '.desc = TRUE' permet de trier par ordre decroissant
+
+levels(
+  fct_reorder(.f = penguins$species,
+              .x = penguins$bill_length_mm,
+              .fun = median,
+              .na_rm = TRUE,
+              .desc = TRUE))
+
+# Le meme resultat peut etre obtenu en utilisant fct_rev() pour inverser 
+# l'ordre des niveaux : 
+
+levels(
+  fct_rev(
+    fct_reorder(.f = penguins$species,
+                .x = penguins$bill_length_mm,
+                .fun = median,
+                .na_rm = TRUE)))
+
+# Utilisons a present ce code directement dans le code du plot : 
+
+penguins |> 
+  ggplot(aes(x = fct_reorder(.f = species,
+                            .x = bill_length_mm,
+                            .fun = median,
+                            .na_rm = TRUE,
+                            .desc = TRUE),
+             y = bill_length_mm,
+             fill = species, color = species)) +
+  geom_boxplot(width = 0.5, alpha = 0.5,
+               show.legend = FALSE) +
+  geom_jitter(alpha = 0.25, width = 0.2, show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  scale_color_manual(values = my_cols) +
+  labs(title = "Repartition de longueur du bec par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Longueur du bec (mm)") +
+  theme_bw()
+
+
+
+
 # EN VRAC ----
 
 # Par defaut, les niveaux de la variable qualitative (ici les especes) sont triees
