@@ -270,179 +270,371 @@ penguins |>
        y = "Longueur du bec (mm)") +
   theme_bw()
 
-
-
-
-# EN VRAC ----
-
-# Par defaut, les niveaux de la variable qualitative (ici les especes) sont triees
-# par ordre alphabetique.
-
-# Les fonction fct_*() du package {forcats} permettent de modifier l'ordre des niveaux
-# d'un facteur.
-
-# La fonction fct_infreq() permet de trier les niveaux d'un facteur par frequence (par
-# defaut par ordre decroissant) : 
+# Le package {forcats} est egalement tres utile pour modifier l'ordre des
+# classes dans un barplot :
 
 penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75)
+  ggplot(aes(x = species,
+             fill = species)) +
+  geom_bar(width = 0.75,
+           show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Nombre d'individus par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Frequence") +
+  theme_bw()
 
-# La fonction geom_text() permet d'ajouter une couche contenant du texte (chaine de
-# caracteres ou valeurs numeriques) a notre plot.
-# Dans la fonction geom_text(), nous precisons : 
-# - quelle etiquette ajouter : 'aes(label = ..count..)'
-# - quelle statistique utiliser : 'stat = "count"'
-
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count")
-
-# Nous souhaitons que les etiquettes soient affichees au-dessus des barres.
-# Les fonctions hjust() et vjust() permettent de mofifier la justification de 
-# texte ('hjust' pour la justification horizontale, 'vjust' pour la 
-# justification verticale).
-
-# Ces fonctions s'utilisent avec un argument, une valeur numerique qui precise
-# la justification.
-# Pour la fonction hjust(), ces valeurs indiquent quelle partie de l'etiquette
-# est alignee sur la position le long de l'axe x :
-# 0.5 -> centre
-# 0 -> gauche
-# 1 -> droite
+# La fonction fct_infreq() permet de trier les niveaux du facteur (la variable
+# 'species' par ordre decroissant de frequence) :
 
 penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 0.5)
+  ggplot(aes(x = fct_infreq(species),
+             fill = species)) +
+  geom_bar(width = 0.75,
+           show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Nombre d'individus par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Frequence") +
+  theme_bw()
+
+# 🔠 AJOUTER DU TEXTE -----------------------------------------------------
+
+# Reprenons le barplot que nous venons de creer : 
 
 penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 0)
+  ggplot(aes(x = fct_infreq(species),
+             fill = species)) +
+  geom_bar(width = 0.75,
+           show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Nombre d'individus par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Frequence") +
+  theme_bw()
+
+# Pour rendre ce plot plus explicite, nous souhaitons ajouter des etiquetttes
+# au-dessus des barres indiquant la frequence.
+
+# La fonction geom_text() permet d'ajouter du texte a un plot.
+# Pour ajouter les etiquettes avec la frequence, nous precisons deux arguments : 
+# 1) 'stat = "count" pour indiquer que nous souhaitons ajouter une frequence
+# 2) 'aes(label = after_stat(count))' : pour 'mapper' la frequence sur l'etiquette
 
 penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 1)
+  ggplot(aes(x = fct_infreq(species),
+             fill = species)) +
+  geom_bar(width = 0.75,
+           show.legend = FALSE) +
+  geom_text(stat = "count",
+            aes(label = after_stat(count))) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Nombre d'individus par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Frequence") +
+  theme_bw()
 
-# Pour la fonction vjust(), ces valeurs indiquent quelle partie de l'etiquette
-# est alignee sur la position le long de l'axe y :
-# 0.5 -> centre
-# 0 -> bas
-# 1 -> haut
+# 📄 JUSTIFIER DU TEXTE ---------------------------------------------------
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 0.5)
+# Les parametres 'hjust' et 'vjust' permettent de modifier la justification
+# du texte.
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 0)
+# Pour illustrer comment utiliser ces deux parametres, nous creons un plot
+# avec une ligne horizontale et une ligne verticale, a l'aide des fonctions
+# geom_hline() et geom_vline().
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 1)
+# Le parametre 'linetype' permet de modifier le type de ligne : 
+# 'linetype = 0' ou 'linetype = "blank"
+# 'linetype = 1' ou 'linetype = "solid"
+# 'linetype = 2' ou 'linetype = "dashed"
+# 'linetype = 3' ou 'linetype = "dotted"
+# 'linetype = 4' ou 'linetype = "dotdash"
+# 'linetype = 5' ou 'linetype = "longdash"
+# 'linetype = 6' ou 'linetype = "twodash"
 
-# En utilisant des valeurs numeriques superieures a 1, l'etiquette peut
-# etre eloignee de la position de l'axe x (vers la gauche) ou y (vers le bas) :
+# Pour information, le parametre 'linewidth' permet de modifier l'epaisseur de
+# la ligne, a l'aide d'une valeur numerique (nous ne modifions pas ce parametre).
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 1)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "blank") +
+  geom_vline(xintercept = 0, linetype = 0)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 1.5)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "solid") +
+  geom_vline(xintercept = 0, linetype = 1)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 2)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = 2)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 1)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = 3)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 1.5)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "dotdash") +
+  geom_vline(xintercept = 0, linetype = 4)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 2)
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "longdash") +
+  geom_vline(xintercept = 0, linetype = 5)
 
-# En utilisant des valeurs numeriques inferieures a 0, l'etiquette peut
-# etre eloignee de la position de l'axe x (vers la droite) ou y (vers le haut) :
+ggplot() +
+  geom_hline(yintercept = 0, linetype = "twodash") +
+  geom_vline(xintercept = 0, linetype = 6)
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = 0)
+# Creons un plot sur lequel nous verrons les differentes manieres
+# d'utiliser 'hjust' et 'vjust' : 
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = -0.5)
+p <- ggplot() +
+  geom_hline(yintercept = 0, linetype = "dotted") +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  theme_bw()
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            hjust = -1)
+p
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = 0)
+# Par defaut, le texte est 'centre' : le milieu de la chaine de caracteres (ou
+# de la valeur numerique) est aligne avec les positions definies en x et y.
+# Les valeurs par defaut de 'hjust' et 'vjust' sont egales a 0.5 :
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = -0.5)
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0.5")
 
-penguins |> 
-  ggplot(aes(x = fct_infreq(species))) +
-  geom_bar(width = 0.75) +
-  geom_text(aes(label = ..count..), stat = "count",
-            vjust = -1)
+# Pour la justification horizontale, la valeur numerique precise quelle partie
+# du texte est aligne sur la position definie en 'x' : 
+# 'hjust = 0.5' -> milieu du texte 
+# 'hjust = 0'   -> bord gauche du texte
+# 'hjust = 1'   -> bord droit du texte
 
-# Par defaut, les niveaux de la variable qualitative sont triees
-# par ordre alphabetique.
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 0.5")
 
-# La fonction fct_reorder() du package {forcats} permet de modifier l'ordre des 
-# niveaux d'une variable qualitative en fonction d'une autre variable.
-# Nous souhaitons trier les niveaux de la variable 'species' par ordre 
-# croissant de la mediane de la variable 'body_mass_g'.
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1 ; vjust = 0.5")
 
-penguins |> 
-  ggplot(aes(x = fct_reorder(.f = species,
-                             .x = body_mass_g,
-                             .fun = median, na.rm = TRUE),
-             y = body_mass_g)) +
-  geom_boxplot()
+# Pour la justification verticale, la valeur numerique precise quelle partie
+# du texte est aligne sur la position definie en 'y' : 
+# 'vjust = 0.5' -> milieu du texte 
+# 'vjust = 0'   -> bord inferieur du texte
+# 'vjust = 1'   -> bord superieur du texte
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 1")
+
+# Testons differentes combinaisons pour les parametres 'hjust' et 'vjust' :
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 1")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 1")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1, vjust = 1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1 ; vjust = 1")
+
+# En utilisant des valeurs numeriques superieures a 1 ou inferieures a 0,
+# le bord du texte va s'eloigner des positions definies en 'x' et/ou 'y'.
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = -0.5, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = -0.5 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = -1, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = -1 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 1.5, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 1.5 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 2, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 2 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = -0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = -0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = -1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = -1")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 1) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 1")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 1.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 1.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 2) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 2")
+
+# Il est egalement possible d'utiliser des valeurs numeriques 'intermediaires',
+# comme 0.25, 0.75, -0.25, -0.75 :
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.5, vjust = 0.5) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.5 ; vjust = 0.5")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0, vjust = 0) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0 ; vjust = 0")
+
+p + 
+  geom_text(aes(x = 0, y = 0), label = "texte", hjust = 0.25, vjust = 0.25) +
+  labs(title = "Justification du texte",
+       subtitle = "hjust = 0.25 ; vjust = 0.25")
+
+# Reprenons le code du barplot avec les etiquettes de frequences. Pour alleger
+# le code, nous commencons par assigner le code du plot - sans la fonction
+# geom_text() - dans un objet 'bp' : 
+
+bp <- penguins |> 
+  ggplot(aes(x = fct_infreq(species),
+             fill = species)) +
+  geom_bar(width = 0.75,
+           show.legend = FALSE) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Nombre d'individus par espece",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Frequence") +
+  theme_bw()
+
+# Ajoutons les etiquettes : 
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count))) 
+
+# Les etiquettes sont positionnees de la maniere suivante, avec par defaut
+# un alignement du milieu de la valeur numeriques sur les valeurs 'x' et 'y' : 
+
+# '152' -> x = 1 ; y = 152
+# '124' -> x = 2 ; y = 124
+# '68'  -> x = 3 ; y = 68
+
+# Pour placer les etiquettes au-dessus du bord superieur des barres, en laissant
+# un petit espace entre l'etiquette et le bord superieur de la barre, nous allons
+# modifier 'vjust' pour 'eloigner' les etiquettes de la position definie en 'y'.
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count)),
+            vjust = 0) 
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count)),
+            vjust = -0.2) 
+
+# Nous pourrions egalement placer les etiquettes a l'interieur des barres : 
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count)),
+            vjust = 1.2) 
+
+# 🔠 MODIFIER L'APPARENCE DU TEXTE ----------------------------------------
+
+# Pour faciliter la lecture des frequences, nous allons modifier l'apparence 
+# du texte : 
+# - sa taille a l'aide du parametre 'size' 
+# - sa couleur a l'aide du parametre 'color'
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count)),
+            vjust = 1.2) 
+
+bp + 
+  geom_text(stat = "count",
+            aes(label = after_stat(count)),
+            vjust = 1.2,
+            size = 8, color = "white") 
