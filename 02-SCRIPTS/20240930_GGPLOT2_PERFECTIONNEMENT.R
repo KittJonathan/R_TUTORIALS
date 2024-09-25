@@ -659,7 +659,7 @@ bp +
 # zone : panel.margin, plot.title, axis.ticks, legend.position, ...
 
 # Dans ces fonctions, des parametres vont permettre de preciser quel type d'element
-# est modifie : element_line(), element_rect(), element_text()
+# est modifie : element_line(), element_rect(), element_text().
 
 # Nous allons passer en revue les differents parametres qui peuvent etre
 # modifies. Nous creons pour cela un scatter plot simple : 
@@ -679,28 +679,54 @@ p <- penguins |>
        x = "Longueur de l'aile (mm)",
        y = "Longueur du bec (mm)",
        col = "Espece") +
-  scale_color_manual(values = my_cols) +
-  theme_bw()
+  scale_color_manual(values = my_cols)
 
 p
 
+
 ## PANEL ------------------------------------------------------------------
 
-
-
-p +
-  theme(panel.background = element_rect(fill = "lightblue"))
+# panel.background : arriere-plan du 'panel' (concerne egalement 
+# l'arriere-plan de la legende). 
 
 p +
-  theme(panel.border = element_rect(colour = "lightblue",
-                                    linewidth = 2,
-                                    linetype = 2))
-
-p + 
-  theme(panel.border = element_blank())
+  theme(panel.background = element_rect(fill = "darkblue"))
 
 p +
-  theme(panel.grid = element_line(colour = "blue"))
+  theme(panel.background = element_rect(color = "darkblue"))
+
+p +
+  theme(panel.background = element_rect(color = "darkblue",
+                                        linewidth = 2,
+                                        linetype = "dashed"))
+
+# panel.border : bordure du 'panel' (attention, bien preciser 
+# 'fill = NA' pour que l'interieur du 'panel' soit visible).
+# Permet de modifier la bordure du 'panel' sans modifier la bordure
+# de la legende :
+
+p +
+  theme(panel.border = element_rect(color = "darkblue"))
+
+p +
+  theme(panel.border = element_rect(color = "darkblue", fill = NA))
+
+p +
+  theme(panel.border = element_rect(color = "darkblue", fill = NA,
+                                    linewidth = 2))
+
+p +
+  theme(panel.border = element_rect(color = "darkblue", fill = NA,
+                                    linewidth = 2, linetype = "dotted"))
+
+# panel.grid : grilles a l'interieur du 'panel'. 
+# Il est possible de modifier les grilles :
+# - selon leur position (axe x ou axe y)
+# - selon les graduations (majeures ou mineures).
+# La fonction element_blank() permet de supprimer un parametre.
+
+p +
+  theme(panel.grid = element_line(color = "darkblue"))
 
 p +
   theme(panel.grid = element_blank())
@@ -708,95 +734,261 @@ p +
 p +
   theme(panel.grid.major = element_blank())
 
-p + 
+p +
+  theme(panel.grid.major = element_line(color = "darkblue"))
+
+p +
   theme(panel.grid.minor = element_blank())
 
-p + 
+p +
+  theme(panel.grid.minor = element_line(color = "darkblue"))
+
+p +
   theme(panel.grid.major.x = element_blank())
+
+p +
+  theme(panel.grid.major.x = element_line(color = "darkblue"))
 
 p +
   theme(panel.grid.major.y = element_blank())
 
 p +
+  theme(panel.grid.major.y = element_line(color = "darkblue"))
+
+p +
   theme(panel.grid.minor.x = element_blank())
+
+p +
+  theme(panel.grid.minor.x = element_line(color = "darkblue"))
 
 p +
   theme(panel.grid.minor.y = element_blank())
 
 p +
-  theme(panel.ontop = TRUE)
+  theme(panel.grid.minor.y = element_line(color = "darkblue"))
 
 ## PLOT -------------------------------------------------------------------
 
-p +
-  theme(plot.background = element_rect(fill = "blue",
-                                       colour = "blue"))
+# plot.background : arriere-plan du 'plot' (ne concerne pas 
+# l'arriere-plan de la legende). 
 
 p +
-  theme(plot.title = element_text(colour = "blue"))
+  theme(plot.background = element_rect(fill = "darkblue"))
 
 p +
-  theme(plot.subtitle = element_text(colour = "blue"))
+  theme(plot.background = element_rect(fill = "darkblue", color = "darkblue"))
 
 p +
+  theme(plot.background = element_rect(fill = "darkblue",
+                                       color = "lightblue", linewidth = 5))
+
+# plot.title : modifier l'apparence et/ou la position du titre du plot :
+
+p +
+  theme(plot.title = element_text(face = "plain"))
+
+p +
+  theme(plot.title = element_text(face = "bold"))
+
+p +
+  theme(plot.title = element_text(face = "italic"))
+
+p +
+  theme(plot.title = element_text(face = "bold.italic"))
+
+p +
+  theme(plot.title = element_text(color = "red"))
+
+p +
+  theme(plot.title = element_text(size = 4))
+
+p +
+  theme(plot.title = element_text(size = 16))
+
+# L'argument 'hjust' permet de modifier la justification horizontale du titre,
+# par rapport au milieu de la zone 'panel' (par defaut : 'hjust = 0') : 
+
+p + 
   theme(plot.title = element_text(hjust = 0))
+
+p + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+p + 
+  theme(plot.title = element_text(hjust = 1))
+
+# L'argument 'vjust' permet de modifier la justification verticale du titre
+# (par defaut : 'vjust = 1') : 
+
+p + 
+  theme(plot.title = element_text(vjust = 1))
+
+p + 
+  theme(plot.title = element_text(vjust = 0.5))
+
+p + 
+  theme(plot.title = element_text(vjust = 0))
+
+# Pour un alignement du titre par rapport au milieu de la zone 'plot', il
+# faut preciser 'plot.title.position = "plot"' (par defaut, 
+# 'plot.title.position = "panel"') :
 
 p +
   theme(plot.title = element_text(hjust = 0.5))
 
 p +
-  theme(plot.title = element_text(hjust = 1))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.title.position = "plot")
+
+# L'argument 'plot.title.position' concerne le titre et le sous-titre. 
+# L'argument 'plot.subtitle' permet de modifier la justification du sous-titre : 
 
 p +
   theme(plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
         plot.title.position = "plot")
 
-p
+# L'argument 'margin' permet de modifier les marges autour du titre (et/ou du
+# sous-titre).
+# Cet argument utilise une fonction 'margin()', dans laquelle il faut preciser
+# une ou plusieurs marges a l'aide de lettres et de valeurs numeriques : 
+# 'margin(t = ..., r = ..., b = ..., l = ...)' pour top, right, bottom, left.
+# Il est possible de preciser :
+# - les quatres marges : 'margin(t = 10, r = 10, b = 10, l = 1O)'
+# - une ou plusieurs marges : 'margin(t = 10, b = 10)'
+# - les quatres marges a l'aide uniquement des valeurs numeriques : 
+# 'margin(10, 10, 10, 10)'.
+# Dans ce dernier cas, l'ordre est le suivant : top, right, bottom, left.
 
 p +
-  theme(plot.title = element_text(margin = margin(t = 10)))
+  theme(plot.title = element_text(margin = margin(t = 10, b = 10)))
 
 p +
-  theme(plot.title = element_text(margin = margin(r = 10)))
+  theme(plot.title = element_text(margin = margin(10, 0, 10, 0)))
+
+# Les marges peuvent egalement etre modifiees pour le sous-titre : 
 
 p +
-  theme(plot.title = element_text(margin = margin(b = 10)))
+  theme(plot.title = element_text(margin = margin(10, 0, 5, 0)),
+        plot.subtitle = element_text(margin = margin(0, 0, 10, 0)))
+
+# L'argument 'plot.caption' permet de modifier l'apparence et la position
+# de la 'note de bas de page' : 
 
 p +
-  theme(plot.title = element_text(margin = margin(l = 10)))
+  theme(plot.caption = element_text(face = "italic",
+                                    hjust = 0.5,
+                                    margin = margin(t = 10, b = 5)),
+        plot.caption.position = "plot")
+
+# L'argument 'plot.margin' permet de modifier les marges de la zone de 'plot' :
 
 p +
-  theme(plot.margin = margin(0, 0, 0, 0))
-
-p +
-  theme(plot.margin = margin(20, 0, 0, 0))
-
-p +
-  theme(plot.margin = margin(0, 20, 0, 0))
-
-p +
-  theme(plot.margin = margin(0, 0, 20, 0))
-
-p +
-  theme(plot.margin = margin(0, 0, 0, 20))
+  theme(plot.margin = margin(t = 5, r = 10, b = 5, l = 10))
 
 ## AXIS -------------------------------------------------------------------
 
-p +
-  theme(axis.title = element_blank())
+# L'argument 'axis.title' permet de modifier l'apparence et la position des 
+# titres d'axes : 
 
 p +
-  theme(axis.title.x = element_text(colour = "red"))
+  theme(axis.title = element_text(color = "red"))
+
+# Les arguments 'hjust' permet de modifier la justification
+# des titres des axes (penser a l'orientation des axes) :
+
+# 'hjust = 0.5' -> milieu du titre centre sur le milieu de l'axe
+# 'hjust = 0' -> milieu du titre centre sur le bord gauche de l'axe
+# 'hjust = 1' -> milieu du titre centre sur le bord droit de l'axe
 
 p +
-  theme(axis.title.y = element_text(color = "red"))
+  theme(axis.title = element_text(color = "red", hjust = 0.5))
+
+p +
+  theme(axis.title = element_text(color = "red", hjust = 0))
+
+p +
+  theme(axis.title = element_text(color = "red", hjust = 1))
+
+# Pour modifier les marges autour des titres d'axes, il faut travailler
+# par axe : 
+
+p +
+  theme(axis.title.x = element_text(color = "red",
+                                    margin = margin(t = 10)))
+
+p +
+  theme(axis.title.y = element_text(color = "red",
+                                    margin = margin(r = 10)))
+
+# Contrairement a 'hjust', 'margin' ne tient pas compte de l'orientation 
+# des axes !
+
+# L'argument 'axis.text' permet de modifier la position et l'apparence du texte
+# des axes : 
 
 p +
   theme(axis.text = element_text(color = "red"))
 
 p +
+  theme(axis.text.x = element_text(color = "red",
+                                   margin = margin(t = 5),
+                                   angle = 45))
+
+# L'argument 'axis.ticks' permet de modifier l'apparence des reperes de 
+# graduations : 
+
+p +
   theme(axis.ticks = element_blank())
 
 p +
-  theme(axis.ticks.length = element_line(size = 2))
+  theme(axis.ticks = element_line(color = "red",
+                                  linewidth = 2))
+
+# L'argument 'axis.ticks.length' permet de modifier la longueur des reperes
+# de graduations : 
+
+p + 
+  theme(axis.ticks = element_line(color = "red"),
+        axis.ticks.length = unit(0.25, "cm"))
+
+# Il est possible de parametrer les reperes de graduations en fonction de 
+# l'axe : 
+
+p +
+  theme(axis.ticks.x = element_line(color = "red"),
+        axis.ticks.length.x = unit(0.25, "cm"),
+        axis.ticks.y = element_line(color = "darkgreen"),
+        axis.ticks.length.y = unit(0.25, "cm"))
+
+## LEGEND -----------------------------------------------------------------
+
+p
+
+p +
+  theme(legend.background = element_rect(fill = "darkblue"),
+        legend.key = element_rect(fill = "darkblue"),
+        legend.key.size = unit(0.5, "cm"),
+        legend.title = )
+
+
+
+
+
+# PCA  --------------------------------------------------------------------
+
+library(tidymodels)
+
+df <- penguins |> 
+  select(species, where(is.numeric), -year) |> 
+  drop_na()
+
+pca_fit <- df |> 
+  select(where(is.numeric)) |> 
+  prcomp(scale = TRUE)
+
+
+pca_fit |> 
+  augment(df) |> 
+  ggplot(aes(.fittedPC1, .fittedPC2, color = species)) +
+  geom_point()
