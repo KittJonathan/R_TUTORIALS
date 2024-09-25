@@ -637,4 +637,166 @@ bp +
   geom_text(stat = "count",
             aes(label = after_stat(count)),
             vjust = 1.2,
-            size = 8, color = "white") 
+            size = 8, color = "white", f) 
+
+# 🎨 MODIFIER L'APPARENCE DU PLOT -----------------------------------------
+
+# Les themes predefinis dans ggplot2 permettent de modifier l'apparence
+# generale d'un plot (theme_bw(), theme_minimal(), ...)
+
+# La fonction theme() permet de modifier tous les parametres du plot.
+
+# Les plots generes a l'aide de ggplot2 se divisent en 4 zones, dont chacune
+# pourra etre modifie : 
+
+# 1) 'panel' : la zone qui contient la representation graphique 
+# 2) 'plot' : la zone qui encadre le 'panel'
+# 3) 'axis' : les axes x et y 
+# 4) 'legend' : la legende de la figure
+
+# Pour chaque zone d'une figure, il existe des arguments permettant de modifier
+# les differents elements de la zone. Ces arguments commencent par le nom de la
+# zone : panel.margin, plot.title, axis.ticks, legend.position, ...
+
+# Dans ces fonctions, des parametres vont permettre de preciser quel type d'element
+# est modifie : element_line(), element_rect(), element_text()
+
+# Nous allons passer en revue les differents parametres qui peuvent etre
+# modifies. Nous creons pour cela un scatter plot simple : 
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point() +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  scale_color_manual(values = my_cols) +
+  theme_bw()
+
+p
+
+## PANEL ------------------------------------------------------------------
+
+
+
+p +
+  theme(panel.background = element_rect(fill = "lightblue"))
+
+p +
+  theme(panel.border = element_rect(colour = "lightblue",
+                                    linewidth = 2,
+                                    linetype = 2))
+
+p + 
+  theme(panel.border = element_blank())
+
+p +
+  theme(panel.grid = element_line(colour = "blue"))
+
+p +
+  theme(panel.grid = element_blank())
+
+p +
+  theme(panel.grid.major = element_blank())
+
+p + 
+  theme(panel.grid.minor = element_blank())
+
+p + 
+  theme(panel.grid.major.x = element_blank())
+
+p +
+  theme(panel.grid.major.y = element_blank())
+
+p +
+  theme(panel.grid.minor.x = element_blank())
+
+p +
+  theme(panel.grid.minor.y = element_blank())
+
+p +
+  theme(panel.ontop = TRUE)
+
+## PLOT -------------------------------------------------------------------
+
+p +
+  theme(plot.background = element_rect(fill = "blue",
+                                       colour = "blue"))
+
+p +
+  theme(plot.title = element_text(colour = "blue"))
+
+p +
+  theme(plot.subtitle = element_text(colour = "blue"))
+
+p +
+  theme(plot.title = element_text(hjust = 0))
+
+p +
+  theme(plot.title = element_text(hjust = 0.5))
+
+p +
+  theme(plot.title = element_text(hjust = 1))
+
+p +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        plot.title.position = "plot")
+
+p
+
+p +
+  theme(plot.title = element_text(margin = margin(t = 10)))
+
+p +
+  theme(plot.title = element_text(margin = margin(r = 10)))
+
+p +
+  theme(plot.title = element_text(margin = margin(b = 10)))
+
+p +
+  theme(plot.title = element_text(margin = margin(l = 10)))
+
+p +
+  theme(plot.margin = margin(0, 0, 0, 0))
+
+p +
+  theme(plot.margin = margin(20, 0, 0, 0))
+
+p +
+  theme(plot.margin = margin(0, 20, 0, 0))
+
+p +
+  theme(plot.margin = margin(0, 0, 20, 0))
+
+p +
+  theme(plot.margin = margin(0, 0, 0, 20))
+
+## AXIS -------------------------------------------------------------------
+
+p +
+  theme(axis.title = element_blank())
+
+p +
+  theme(axis.title.x = element_text(colour = "red"))
+
+p +
+  theme(axis.title.y = element_text(color = "red"))
+
+p +
+  theme(axis.text = element_text(color = "red"))
+
+p +
+  theme(axis.ticks = element_blank())
+
+p +
+  theme(axis.ticks.length = element_line(size = 2))
