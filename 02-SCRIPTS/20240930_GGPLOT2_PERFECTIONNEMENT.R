@@ -105,6 +105,23 @@ my_cols <- c("Adelie" = "darkorange",
 
 p + scale_color_manual(values = my_cols)
 
+# 📏 MODIFIER LES ECHELLES DES AXES ---------------------------------------
+
+# Les fonctions scale_*_continuous() permettent de modifier les echelles des
+# axes :
+# - l'argument 'breaks' permet de definir les intervalles
+# - l'argument 'labels' permet de definir les etiquettes
+# - l'argument 'minor_breaks' permet d'afficher ou non les graduations mineures
+
+p +
+  scale_color_manual(values = my_cols)
+
+p +
+  scale_color_manual(values = my_cols) +
+  scale_x_continuous(breaks = seq(170, 230, 20)) +
+  scale_y_continuous(breaks = seq(35, 60, 5), minor_breaks = FALSE)
+
+
 # ➕ COMBINER PLUSIEURS TYPES DE REPRESENTATION ----------------------------
 
 # Creons un boxplot de la variable 'bill_length_mm' par espece.
@@ -963,17 +980,183 @@ p +
 
 ## LEGEND -----------------------------------------------------------------
 
+# L'argument 'legend.background' permet de modifier l'arriere-plan de la 
+# legende :
+
 p
 
 p +
-  theme(legend.background = element_rect(fill = "darkblue"),
-        legend.key = element_rect(fill = "darkblue"),
-        legend.key.size = unit(0.5, "cm"),
-        legend.title = )
+  theme(legend.background = element_rect(fill = "lightblue",
+                                         color = "darkblue"))
 
+# L'argument 'legend.margin' permet de modifier les marges autour de la 
+# legende :
 
+p +
+  theme(legend.margin = margin(l = 10, r = 10))
 
+# L'argument 'legend.key' permet de modifier l'arriere-plan des 'cles' de la
+# legende : 
 
+p +
+  theme(legend.key = element_rect(fill = "lightblue",
+                                  color = "darkblue"))
+
+# L'argument 'legend.text' permet de modifier le texte de la legende : 
+
+p +
+  theme(legend.text = element_text(face = "italic",
+                                   color = "red", 
+                                   size = 14))
+
+# L'argument 'legend.text.position' permet de modifier la position du texte
+# de la legende par rapport aux symboles : 
+
+p + 
+  theme(legend.text.position = "left")
+
+# L'argument 'legend.title' permet de modifier le titre de la legende : 
+
+p +
+  theme(legend.title = element_text(face = "bold",
+                                    color = "red", 
+                                    hjust = 0.5))
+
+# L'argument 'legend.title.position' permet de modifier l'emplacement du titre
+# de la legende par rapport au reste de la legende : 
+
+p +
+  theme(legend.title.position = "bottom")
+
+# L'argument 'legend.position' permet de modifier l'emplacement de la legende
+# par rapport au 'panel'. Lorsque la legende est situee au-dessus ou 
+# en-dessous du 'panel', son orientation change pour etre horizontale :
+
+p +
+  theme(legend.position = "left")
+
+p +
+  theme(legend.position = "bottom")
+
+p +
+  theme(legend.position = "top")
+
+# L'argument 'legend.direction' permet de modifier l'orientation de la legende :
+
+p +
+  theme(legend.direction = "horizontal", legend.location = "plot")
+
+# L'argument 'legend.location' permet d'aligner la legende soit par rapport 
+# au 'panel' (par defaut), soit par rapport au 'plot' : 
+
+p +
+  theme(legend.position = "left",
+        legend.location = "panel")
+
+p +
+  theme(legend.position = "left",
+        legend.location = "plot")
+
+# 🎨 UTILISER DES 'GUIDES'  -----------------------------------------------
+
+# Par defaut, les symboles utilises dans la legende reprennent l'apparence
+# des elements geometriques utilises pour creer le plot : 
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = bill_length_mm,
+             color = species)) +
+  geom_point() +
+  scale_color_manual(values = my_cols)
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = bill_length_mm,
+             color = species)) +
+  geom_point(shape = 21) +
+  scale_color_manual(values = my_cols)
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = bill_length_mm,
+             color = species)) +
+  geom_point(shape = 19, alpha = 0.5) +
+  scale_color_manual(values = my_cols)
+
+# La fonction 'guides' permet de definir manuellement l'apparence des 
+# symboles de la legende. Cette fonction s'utilise en precisant : 
+# - le parametre a modifier (dans notre cas, 'color')
+# - la fonction 'guide_legend()'
+# - l'argument 'override.aes = list(...)'
+# - les parametres a appliquer.
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = bill_length_mm,
+             color = species)) +
+  geom_point(shape = 19, alpha = 0.5) +
+  scale_color_manual(values = my_cols) +
+  guides(color = guide_legend(override.aes = list(size = 10,
+                                                  alpha = 1)))
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = bill_length_mm,
+             color = species)) +
+  geom_point(shape = 19, alpha = 0.5) +
+  scale_color_manual(values = my_cols) +
+  guides(color = guide_legend(override.aes = list(shape = 4,
+                                                  size = 10,
+                                                  alpha = 1)))
+
+# 🎨 MODIFIER L'APPARENCE DU PLOT - SYNTHESE ------------------------------
+
+# Nous allons repartir du plot precedent et appliquer des modifications 
+# pour le rendre plus lisible : 
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point() +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  scale_color_manual(values = my_cols)
+
+p
+
+p +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        plot.title = element_text(face = "bold",
+                                  size = 16,
+                                  margin = margin(t = 10),
+                                  hjust = 0.5),
+        plot.subtitle = element_text(face = "italic",
+                                     size = 12,
+                                     margin = margin(t = 4, b = 10),
+                                     hjust = 0.5),
+        plot.caption = element_text(size = 10,
+                                    margin = margin(t = 5, r = 10, b = 10)),
+        plot.caption.position = "plot",
+        plot.margin = margin(l = 5, r = 15),
+        axis.title = element_text(size = 14),
+        axis.title.x = element_text(margin = margin(t = 10)),
+        axis.title.y = element_text(margin = margin(r = 10, l = 10)),
+        axis.text = element_text(size = 12),
+        axis.ticks = element_blank(),
+        legend.position = "top",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 14,
+                                   margin = margin(l = -1, r = 25))) +
+  guides(color = guide_legend(override.aes = list(size = 4)))
 
 # PCA  --------------------------------------------------------------------
 
