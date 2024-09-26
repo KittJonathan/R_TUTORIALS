@@ -7,21 +7,14 @@
 
 install.packages("tidyverse")  # manipulation, visualisation
 install.packages("palmerpenguins")  # jeux de donnees
-# install.packages("ggstatsplot")  # representer des tests stats
-# install.packages("skimr")  # synthese des donnees
-# install.packages("janitor")  # nettoyage des donnees
-# install.packages("glue")  # evaluer du code et l'inserer dans du texte
+
 
 # 📦 CHARGER LES PACKAGES$ ------------------------------------------------
 
 library(tidyverse)  
 library(palmerpenguins)
-# library(skimr)
-# library(janitor)
-# library(glue)
-# library(ggstatsplot)
 
-pacman::p_load(tidyverse, palmerpenguins, skimr, janitor, glue)
+pacman::p_load(tidyverse, palmerpenguins)
 
 # 🔽 IMPORTER LES DONNEES -------------------------------------------------
 
@@ -29,7 +22,7 @@ pacman::p_load(tidyverse, palmerpenguins, skimr, janitor, glue)
 # - penguins_raw : données brutes
 # - penguins : données nettoyees
 
-# Pour ce tutoriel de perfecionnement nous allons utiliser les donnees brutes.
+# Pour ce tutoriel de perfecionnement nous allons utiliser les donnees propres.
 
 penguins <- palmerpenguins::penguins
 
@@ -195,6 +188,140 @@ bp +
   geom_jitter(alpha = 0.25, width = 0.2, show.legend = FALSE) +
   scale_fill_manual(values = my_cols) +
   scale_color_manual(values = my_cols)
+
+# 📊 PLOTS MULTIPLES ------------------------------------------------------
+
+# Les fonction facet_grid() et facet_wrap() permettent de creer des plots
+# multiples.
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point() +
+  scale_color_manual(values = my_cols) +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  theme_bw()
+
+p
+
+# facet_wrap() permet de separer un plot par une variable qualitative,
+# a l'aide d'un tilde '~' : 
+
+p +
+  facet_wrap(~ species)
+
+# La legende n'est plus utile, nous la supprimons dans le code d'origine
+# a l'aide de l'argument 'show.legend = FALSE' : 
+
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point(show.legend = FALSE) +
+  scale_color_manual(values = my_cols) +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  theme_bw()
+
+p +
+  facet_wrap(~ species)
+
+# Les arguments 'nrow' et 'ncol' permettent de modifier le nombre de lignes et
+# de colonnes sur lesquelles repartir les plots : 
+
+p +
+  facet_wrap(~ species,
+             nrow = 2)
+
+p +
+  facet_wrap(~ species,
+             ncol = 1)
+
+# L'argument 'scales' permet de conserver la meme echelle pour l'ensemble
+# des plots ('scales = "fixed"') ou de creer une echelle par plot
+# ('scales = "free"') :
+
+p +
+  facet_wrap(~ species,
+             scales = "fixed")
+
+p +
+  facet_wrap(~ species,
+             scales = "free")
+
+p +
+  facet_wrap(~ species,
+             switch = "x")
+
+# L'argument 'switch' permet d'echanger la position des etiquettes des 
+# plots : 
+# - 'switch = "x"' -> etiquettes en bas du plot
+# - 'switch = "y"' -> etiquettes a gauche du plot (valable pour facet_grid())
+# - 'switch = "both"' -> echange sur les deux axes (valable pour facet_grid())
+
+p +
+  facet_wrap(~ species, switch = "x")
+
+# L'argument 'dir' permet de changer l'orientation des plots : 
+# - 'dir = "h"' -> plots repartis le long de l'axe horizontal (par defaut)
+# - 'dir = "v"' -> plot repartis le long de l'axe vertical
+
+p +
+  facet_wrap(~ species, dir = "h")
+
+p +
+  facet_wrap(~ species, dir = "v")
+
+# Cette derniere commande effectue la meme operation que : 
+
+p +
+  facet_wrap(~ species, nrow = 3)
+
+# ou :
+
+p +
+  facet_wrap(~ species, ncol = 1)
+
+# L'argument 'strip.position' permet de choisir l'emplacement
+# des etiquettes par rapport a chaque plot : 
+
+p +
+  facet_wrap(~ species, strip.position = "top")
+
+p +
+  facet_wrap(~ species, strip.position = "right")
+
+p +
+  facet_wrap(~ species, strip.position = "bottom")
+
+p +
+  facet_wrap(~ species, strip.position = "left")
+
+# Il est possible de separer les plots en fonction de deux variables
+# qualitatives : 
+
+p +
+  facet_wrap(species ~ island)
+
+# Mais la fonction facet_grid() est plus adaptee : 
+
+p +
+  facet_grid(species ~ island)
+
 
 # 🔃 GESTION DES FACTEURS -------------------------------------------------
 
