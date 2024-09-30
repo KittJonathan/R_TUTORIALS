@@ -7,16 +7,16 @@
 
 install.packages("tidyverse")  # manipulation, visualisation
 install.packages("palmerpenguins")  # jeux de donnees
-install.packages("ggpubr")  # figures 'pretes a etre publiees'
+install.packages("ggpmisc")  # ajouter des annotations
 
 
 # 📦 CHARGER LES PACKAGES$ ------------------------------------------------
 
 library(tidyverse)  
 library(palmerpenguins)
-library(ggpubr)
+library(ggpmisc)
 
-pacman::p_load(tidyverse, palmerpenguins, ggpubr)
+pacman::p_load(tidyverse, palmerpenguins, ggpmisc)
 
 # 🔽 IMPORTER LES DONNEES -------------------------------------------------
 
@@ -46,20 +46,20 @@ p <- penguins |>
 
 p
 
-# La fonction 'geom_smooth' permet d'ajouter une droite de regression.
-# Pour preciser que nous souhaitons appliquer une regression lineaire, nous 
-# ajoutons l'argument 'method = "lm"'.
+# La fonction 'stat_poly_line()' du package {ggpmisc} permet d'ajouter une
+# droite de regression. Pour preciser que nous souhaitons appliquer une
+# regression lineaire, nous ajoutons l'argument 'method = "lm"' :
 
 p +
-  geom_smooth(method = "lm")
+  stat_poly_line(method = "lm")
 
 # L'argument 'se = FALSE' permet de n'afficher que la droite, sans l'erreur
 # standard ('se' = 'standard error'). Nous modifions egalement la couleur et
 # la largeur de la droite : 
 
 p +
-  geom_smooth(method = "lm", se = FALSE,
-              color = "red", linewidth = 0.5)
+  stat_poly_line(method = "lm", se = FALSE,
+                 color = "red", linewidth = 0.5) 
 
 # Calculons l'equation de la droite de regression a l'aide de la fonction 'lm' :
 
@@ -67,33 +67,22 @@ fit <- lm(flipper_length_mm ~ body_mass_g, data = penguins)
 
 fit$coefficients
 
-# Le package {ggpubr} permet d'ajouter directement l'equation de la droite de
-# regression au plot, a l'aide de la fonction 'stat_regline_equation()' : 
+# La fonction 'stat_poly_eq()' permet d'ajouter l'equation et les coefficients
+# de la regression : 
 
 p +
-  geom_smooth(method = "lm", se = FALSE,
-              color = "red", linewidth = 0.5) +
-  stat_regline_equation()
+  stat_poly_line(method = "lm", se = FALSE,
+                 color = "red", linewidth = 0.5) +
+  stat_poly_eq()
 
-# Les arguments 'label.x' et 'label.y' permettent de deplacer l'equation,
-# et l'argument 'size' permet de modifier la taille du texte : 
-
-p +
-  geom_smooth(method = "lm", se = FALSE,
-              color = "red", linewidth = 0.5) +
-  stat_regline_equation(label.x = 5000, label.y = 190, size = 5)
-
-# La fonction 'stat_cor' permet d'ajouter le coefficient de correlation.
-# Pour afficher le 'R^2', nous ajoutons une deuxieme couche 'stat_cor' et
-# utilisons l'argument 'aes(label = ..rr.label..)' :
+# Par defaut, la fonction 'stat_poly_eq()' affiche le coefficient R^2.
+# D'autres elements peuvent etre ajoutes au plot a l'aide de la fonction
+# 'use_label()' :
 
 p +
-  geom_smooth(method = "lm", se = FALSE,
-              color = "red", linewidth = 0.5) +
-  stat_regline_equation(label.x = 5000, label.y = 190, size = 5) +
-  stat_cor(label.x = 5000, label.y = 185, size = 4) +
-  stat_cor(aes(label = ..rr.label..),
-           label.x = 5000, label.y = 180, size = 4)
+  stat_poly_line(method = "lm", se = FALSE,
+                 color = "red", linewidth = 0.5) +
+  stat_poly_eq(use_label("eq", "R2"))
 
 # Nous allons maintenant representer les droites de regression par espece : 
 
@@ -117,38 +106,17 @@ p <- penguins |>
 # Nous ajoutons les equations des 3 droites de regression : 
 
 p +
-  stat_regline_equation(aes(label = paste(..eq.label.., ..adj.rr.label.., sep = "\t")))
-
-# Et les coefficients de correlation : 
-
-p +
-  stat_regline_equation(label.x = -Inf, label.y = Inf)
-
-
-
-# Nous souhaitons afficher sur notre plot l'equation de la regression lineaire
-# ainsi que les coefficients :
-
-
-
-penguins |> 
-  ggplot(aes(x = body_mass_g, y = flipper_length_mm,
-             color = species)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  scale_color_manual(values = my_cols) +
-  labs(title = "Rapport entre la masse corporelle et la longueur de l'aile",
-       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
-       caption = "Donnees issues du package {palmerpenguins}",
-       x = "Masse corporelle (g)",
-       y = "Longueur de l'aide (mm)",
-       col = "Espece")
-  
-
+  stat_poly_line(method = "lm", se = FALSE,
+                 linewidth = 0.5, show.legend = FALSE) +
+  stat_poly_eq(use_label("eq", "R2"))
 
 # PCA  --------------------------------------------------------------------
 
 library(tidymodels)
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
 
 df <- penguins |> 
   select(species, where(is.numeric), -year) |> 
@@ -162,5 +130,9 @@ pca_fit <- df |>
 pca_fit |> 
   augment(df) |> 
   ggplot(aes(.fittedPC1, .fittedPC2, color = species)) +
-  geom_point()
+  geom_point() +
+  scale_color_manual(values = my_cols)
+
+pca_fit |> 
+  tidy(matrix = 'rotation')
 
