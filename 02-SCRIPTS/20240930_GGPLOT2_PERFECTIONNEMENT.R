@@ -1285,20 +1285,75 @@ p +
                                    margin = margin(l = -1, r = 25))) +
   guides(color = guide_legend(override.aes = list(size = 4)))
 
-# PCA  --------------------------------------------------------------------
+# 📊 GEOM_RUG() -----------------------------------------------------------
 
-library(tidymodels)
+# La fonction geom_rug() permet d'ajouter sur les bords de la zone 'panel' des
+# barres representant la repartition des observations : 
 
-df <- penguins |> 
-  select(species, where(is.numeric), -year) |> 
-  drop_na()
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
 
-pca_fit <- df |> 
-  select(where(is.numeric)) |> 
-  prcomp(scale = TRUE)
+p <- penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             col = species)) +
+  geom_point() +
+  labs(title = "Rapport entre la longueur de l'aile et la longueur du bec",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       col = "Espece") +
+  scale_color_manual(values = my_cols)
 
+p +
+  geom_rug()
 
-pca_fit |> 
-  augment(df) |> 
-  ggplot(aes(.fittedPC1, .fittedPC2, color = species)) +
-  geom_point()
+# La legende prend en compte les deux representations graphiques : les points 
+# et les barres. L'argument 'show.legend = FALSE' permet de n'afficher dans 
+# la legende que les points : 
+
+p +
+  geom_rug(show.legend = FALSE)
+
+# 📊 GEOM_VIOLIN() --------------------------------------------------------
+
+# Les 'violin plots' permettent de representer la densite des observations :
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+
+penguins |> 
+  ggplot(aes(x = species, y = body_mass_g,
+             color = species,
+             fill = species)) +
+  geom_violin(show.legend = FALSE,
+              alpha = 0.1) +
+  scale_color_manual(values = my_cols) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Distribution de la masse corporelle",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Masse corporelle (g)")
+
+# Combines a des boxplots, les violin plots permettent d'avoir un bon apercu
+# de la distribution d'une variable : 
+
+penguins |> 
+  ggplot(aes(x = species, y = body_mass_g,
+             color = species,
+             fill = species)) +
+  geom_violin(show.legend = FALSE,
+              alpha = 0.1) +
+  geom_boxplot(show.legend = FALSE,
+               fill = "white", width = 0.2) +
+  scale_color_manual(values = my_cols) +
+  scale_fill_manual(values = my_cols) +
+  labs(title = "Distribution de la masse corporelle",
+       subtitle = "Pour 3 especes de pingouins de l'archipel Palmer",
+       caption = "Donnees issues du package {palmerpenguins}",
+       x = "",
+       y = "Masse corporelle (g)")
