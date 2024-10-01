@@ -14,7 +14,8 @@ install.packages("ggpmisc")  # ajouter des annotations
 
 library(tidyverse)  
 library(palmerpenguins)
-library(ggpmisc)
+# library(ggpmisc)
+library(showtext)
 
 pacman::p_load(tidyverse, palmerpenguins, ggpmisc)
 
