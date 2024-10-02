@@ -8,16 +8,18 @@
 install.packages("tidyverse")  # manipulation, visualisation
 install.packages("palmerpenguins")  # jeux de donnees
 install.packages("ggpmisc")  # ajouter des annotations
+install.packages("ggdist")  # distributions
 
 
 # 📦 CHARGER LES PACKAGES$ ------------------------------------------------
 
 library(tidyverse)  
 library(palmerpenguins)
+library(ggdist)
 # library(ggpmisc)
-library(showtext)
+# library(showtext)
 
-pacman::p_load(tidyverse, palmerpenguins, ggpmisc)
+# pacman::p_load(tidyverse, palmerpenguins, ggpmisc)
 
 # 🔽 IMPORTER LES DONNEES -------------------------------------------------
 
@@ -137,3 +139,30 @@ pca_fit |>
 pca_fit |> 
   tidy(matrix = 'rotation')
 
+
+
+# 📊 GGDIST ---------------------------------------------------------------
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = species, fill = species)) +
+  stat_slab(aes(thickness = stat(pdf*n)),
+            scale = 0.7)
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = species, fill = species)) +
+  stat_slab(aes(thickness = stat(pdf*n)),
+            scale = 0.7) +
+  stat_dotsinterval(side = "bottom",
+                    scale = 0.7,
+                    slab_size = NA)
+
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = species, fill = species)) +
+  stat_slab(aes(thickness = stat(pdf*n)),
+            scale = 0.7) +
+  stat_dotsinterval(side = "bottom",
+                    scale = 0.7,
+                    slab_size = NA) +
+  scale_fill_brewer(palette = "Set2") +
+  theme(legend.position = "none") +
+  labs(title = "Raincloud plot with ggdist")
