@@ -1,0 +1,87 @@
+---
+title: "Etude de trois espèces de pingouins"
+author: "Jonathan Kitt"
+date: today
+date-format: iso
+toc: true
+toc-location: body
+language: 
+  title-block-author-single: "Auteur"
+  title-block-published: "Publié le"
+  toc-title-document: "Table des matières"
+format: html
+editor: visual
+bibliography: references.bib
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+# Introduction
+
+Les données que nous allons analyser sont issues du package [`{palmerpenguins}`](https://allisonhorst.github.io/palmerpenguins/)`.`
+
+[![](lter_penguins.png){fig-align="center" width="50%"}](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png)
+
+Le jeu de données contient des mesures prises sur **`{r} length(unique(penguins$species))`** **espèces** de pingouins vivant sur **`{r} length(unique(penguins$island))` îles** de l'archipel Palmer.
+
+Les données ont été publiées dans [@gorman2014].
+
+# Description des données
+
+Le jeu de données contient **`{r} ncol(penguins)` variables** et **`{r} nrow(penguins)` observations**.
+
+Certaines variables sont qualitatives :
+
+```{r, echo=FALSE}
+penguins |> 
+  skimr::skim() |> 
+  filter(skim_type == "factor") |> 
+  select(variable = skim_variable,
+         nb_manquants = n_missing,
+         nb_cat = factor.n_unique) |> 
+  gt::gt()
+```
+
+D'autres sont quantitatives :
+
+```{r, echo=FALSE}
+penguins |> 
+  skimr::skim() |>
+  filter(skim_type == "numeric") |> 
+  select(variable = skim_variable,
+         nb_manquants = n_missing,
+         moyenne = numeric.mean,
+         mediane = numeric.sd,
+         min = numeric.p0,
+         max = numeric.p100,
+         distribution = numeric.hist) |> 
+  gt::gt()
+```
+
+# Dimensions du bec
+
+Nous calculons le rapport entre la longueur et la hauteur du bec à l'aide de la formule suivante :
+
+$$
+ratio = \frac{longueur\ du\ bec}{hauteur\ du\ bec}
+$$
+
+Nous pouvons alors représenter ce rapport pour chaque espèce à l'aide d'un **boxplot** (@fig-bill-ratio).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: fig-bill-ratio
+#| fig-cap: "Rapport entre la longueur et la hauteur du bec"
+penguins |> 
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) |> 
+  ggplot(aes(x = species, y = bill_ratio)) +
+  geom_boxplot() +
+  labs(x = "",
+       y = "Rapport entre la longueur et la hauteur du bec") +
+  theme_bw()
+
+```
