@@ -1,0 +1,132 @@
+---
+title: "Pingouins de l'archipel Palmer"
+format: 
+  revealjs: 
+    chalkboard: true
+execute: 
+  echo: false
+editor: visual
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+language: 
+  section-title-references: "Bibliographie"
+---
+
+```{r}
+#| message: false
+#| warning: false
+library(palmerpenguins)
+library(gt)
+library(tidyverse)
+
+my_cols <- c("Adelie" = "darkorange",
+             "Chinstrap" = "purple",
+             "Gentoo" = "cyan4")
+```
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png){fig-align="center" width="75%"}
+
+# Données
+
+##  {.smaller}
+
+Le jeu de données **`penguins`** est issu du package [{palmerpenguins}](https://allisonhorst.github.io/palmerpenguins/) [@gorman2014].
+
+Ce jeu de données contient :
+
+-   `r nrow(penguins)` observations
+
+-   `r ncol(penguins)` variables
+
+```{r}
+penguins |> 
+  head(5) |> 
+  gt()
+```
+
+# Analyse
+
+## Nombre d'individus {.smaller}
+
+```{r}
+#| tbl-cap: "Nombre d'individus par espèce et par île"
+table(penguins$species, penguins$island)
+```
+
+::: notes
+Seule l'espèce *Adelie* est présente sur les trois îles.
+:::
+
+## Rapport entre l'aile et le bec {.smaller}
+
+```{r}
+#| warning: false
+penguins |> 
+  ggplot(aes(x = flipper_length_mm,
+             y = bill_length_mm,
+             color = species)) +
+  geom_point() +
+  scale_color_manual(values = my_cols) +
+  labs(x = "Longueur de l'aile (mm)",
+       y = "Longueur du bec (mm)",
+       color = "Espèce") +
+  theme_bw()
+```
+
+::: notes
+Les individus de l'espèce *Gentoo* ont dans l'ensemble des ailes plus longues.
+
+Les individus des espèces *Adelie* et *Chinstrap* ont globalement des ailes de longueur similaire, mais les individus de l'espèce *Chinstrap* ont des becs plus longs.
+:::
+
+## Rapport entre la longueur et la hauteur du bec {.smaller}
+
+```{r}
+#| warning: false
+penguins |> 
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point() +
+  scale_color_manual(values = my_cols) +
+  labs(x = "Longueur du bec (mm)",
+       y = "Hauteur du bec (mm)",
+       color = "Espèce") +
+  theme_bw()
+```
+
+::: notes
+Les individus de l'espèce *Adelie* ont dans l'ensemble des becs plus courts.
+
+Les individus des espèces *Chinstrap* et *Gentoo* ont globalement des becs de longueur similaire, mais les individus de l'espèce *Chinstrap* ont des becs plus hauts.
+:::
+
+## Ratio des dimensions du bec {.smaller}
+
+Nous calculons le ratio entre ces deux mesures à l'aide de la formule suivante :
+
+$$ratio = \frac{longueur\ du\ bec}{hauteur\ du\ bec}$$
+
+```{r}
+#| warning: false
+penguins |> 
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) |> 
+  ggplot(aes(x = species,
+             y = bill_ratio,
+             color = species,
+             fill = species)) +
+  geom_boxplot(alpha = 0.2, show.legend = FALSE) +
+  scale_color_manual(values = my_cols) +
+  scale_fill_manual(values = my_cols) +
+  labs(x = "Espèce",
+       y = "Ratio entre la longueur et la hauteur du bec",
+       color = "Espèce") +
+  theme_bw()
+```
+
+::: notes
+Les espèces peuvent être triées par ordre décroissant de médiane de ratio : *Gentoo*, *Chinstrap* puis *Adelie*.
+:::
+
+## Bibliographie
