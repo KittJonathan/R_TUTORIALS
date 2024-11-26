@@ -228,3 +228,74 @@ log(5, 25)  # le 1er argument est `x`, le 2nd `base`
 log(25, base = 5)  # le 1er argument est `x`
 log(base = 5, 25)  # à éviter
 log(base = 5, x = 25)  # si on souhaite inverser l'ordre des arguments, les déclarer explicitement
+
+# Matching implicite: attention!
+
+# Noms d'arguments explicites (cet exemple utilise des vecteurs, càd des séquences de nombres créées à l'aide
+# de `c()`, que nous verrons plus tard)
+quantile(x = c(5, 1, 3), probs = c(0.25, 0.5, 0.75))
+
+# Matching implicite par positions d'arguments
+quantile(c(5, 1, 3), c(0.25, 0.5, 0.75))
+
+# L'inversion des positions d'arguments peut engendrer tout un tas de problèmes
+quantile(c(0.25, 0.5, 0.75), c(5, 1, 3))
+quantile(c(0.25, 0.5, 0.75), c(0.95, 0.345, 1))
+
+# ⌨️ MISE EN PRATIQUE -----------------------------------------------------
+
+# Lesquelles de ces commandes vont fonctionner ?
+log(x = 1)
+log(x = "1")
+log(x)
+log(value = 1)
+log(`1`)
+log(1)
+
+# ⬅️ ASSIGNATION ET OBJETS ------------------------------------------------
+
+# Exécutez `x <- 1` puis `x`
+x <- 1
+x
+
+# Exécutez maintenant `x + 2`
+x + 2
+
+# Exécutez `x <- 5` et à nouveau `x + 2`
+x <- 5
+x + 2
+
+# Pourquoi n'y a-t-il aucune sortie après la 1e commande ?
+# Quel est l'utilisé du symbole `<-` ?
+# Quelle est la valeur finale de x ?
+# Que se passe-t-il si on exécute `y <- x` ? Puis `y <- x <- 2`
+y <- x ; x; y
+y <- x <- 2 ; x ; y
+# Que se passe-t-il si on exécute `y <- 2 <- x` ?
+y <- 2 <- x
+# Peut-on assigner une valeur et afficher l'objet en même temps ?
+(x <- 4)
+
+# Assignation : name <- "Cedric"
+# name : nom de l'objet
+# <- : flèche d'assignation
+# "Cedric" : valeur de l'objet
+
+x <- 1
+x
+
+x + 2
+
+x <- 5
+x + 2
+
+x
+
+y <- x
+y
+
+y <- x <- 2
+x
+y
+
+y <- 2 <- x
