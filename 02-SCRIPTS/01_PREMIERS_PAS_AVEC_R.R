@@ -59,3 +59,172 @@
 # - La console (+ terminal et jobs)
 # - L'environnement (+ historique, build, suivi de version)
 # - Les plots (+ fichiers, packages, aide, viewer, presentations)
+
+# ⌨️ MISE EN PRATIQUE -----------------------------------------------------
+
+# Ouvrez R, tapez les commandes suivantes dans la console et exécutez-les
+# (touche Entrée)
+
+# "Hello World!"
+# 1
+
+# Ouvrez RStudio et familiarisez-vous avec l'environnement
+# - Help > Cheatsheets > RStudio IDE Cheat Sheet et étudiez le document
+# - View > Panes > Pane Layout et modifiez l'emplacement des panneaux selon votre préférence
+# - Ouvrez un script via File > New File... > R Script, ajoutez les deux commandes ci-dessus et
+# sauvegardez le script
+# - Exécutez les commandes en plaçant le curseur sur la première ligne du script et en cliquant
+# sur le bouton Run (ou en utilisant le raccourci clavier Ctrl + Entrée)
+# - Sauvegardez le script
+
+# ⌨️ LA CONSOLE  ----------------------------------------------------------
+
+# Le code que vous exécutez apparaît à la ligne qui débute avec ">" (invite de 
+# commande).
+# La console affiche également le résultat de la commande (la sortie), à la ligne 
+# qui débute par "[1]".
+
+# Pour effacer le contenu de la console : Ctrl + L
+
+# ⌨️ COMMENTAIRES ---------------------------------------------------------
+
+# Les commentaires sont utiles pour 
+# - inactiver le code qu'on ne souhaite pas exécuter
+# - ajouter des commentaires qui expliquent notre pensée et raisonnement
+
+# Dans R, les commentaires sont indiqués par un hash "#". 
+# Tout ce qui suit un "#" sur une même ligne ne sera pas traité comme du code.
+
+# Convention possible : 
+# "#" pour inactiver du code
+# "##" pour commenter du code
+
+# "Hello World!" ## ce code n'est plus utile mais je préfère le conserver
+
+# Raccourci clavier pour commenter/décommenter du code (une ou plusieurs lignes)
+# Ctrl + Shift + C
+
+# ⚙️ PARAMETRES DE RSTUDIO ------------------------------------------------
+
+# RStudio propose tout un tas de paramètres pour personnaliser son utilisation.
+
+# Tools > Global Options > General > Basic
+# - décocher les cases sous "Workspace" et "History"
+# - valider les modifications en cliquant sur "Apply"
+
+# Tools > Global Options > General > Graphics
+# Choisir "AGG" dans Backend
+
+# Tools > Global Options > Code > Display
+# - Sous General, cocher "Highlight selected word" et "Show line numbers"
+# - Sous General, cocher "Show margin" et choisir "80" pour Margin column
+# - Sous Syntax, cocher toutes les cases
+
+# Tools > Global Options > Appearance
+# possibilité de modifier le thème de RStudio (couleur d'arrière-plan, couleur
+# et taille de la police, ...)
+
+# 📦 PROJETS R ------------------------------------------------------------
+
+# Les projets R (ou projets RStudio) offrent un workflow robust qui nous sera utile :
+# - construit sur l'idée que tous les fichiers associés à un projet devraient être
+# stockés au même endroit
+#   - facilite la recherche de fichiers
+#   - augmente la reproductibilité
+#   - facilite la collaboration
+# - définit le répertoire de travail dans le dossier où se trouve le fichier .Rproj
+#   - assure un répertoire de travail correct
+#   - indépendant du setup et de l'organisation des dossiers
+#   - réduit les obstacles lors d'une collaboration
+
+# Pour créer un projet R de zéro : File > New Project > New Directory > R Project
+
+# Associer un projet à un dossier existant : File > New Project > Existing Directory
+
+# Pour ouvrir un projet dans RStudio : 
+# - explorateur de fichier classique, naviguer jusqu'au répertoire de travail, et
+# cliquer sur le fichier .Rproj
+
+# - Dans RStudio, File > Open Project > naviguer
+
+# - Dans RStudio, tout en haut à droite, sélectionner le projet dans le menu déroulant
+
+# 🔢 VALEURS --------------------------------------------------------------
+
+1
+"Hello World!"
+"2024-11-26 14:57:00"
+x
+"x"
+pi
+
+# Mise en pratique
+# Tapez `2 + 3` et exécutez
+# Essayez d'autres opérateurs arithmétiques comme -, *, /, ou ^.
+# Calculez la racine carrée d'un nombre avec sqrt()
+
+# R est un calculateur!
+2 + 3
+(59 + 73 + 2) * 5
+1 / 200 * 30
+sin(pi / 2)
+10^12 * sqrt(4312)
+log(exp(5))
+
+# ⌨️ FONCTIONS ------------------------------------------------------------
+
+sqrt(x = 25)
+# sqrt : nom de la fonction
+# x : nom de l'argument
+# 25 : valeur de l'argument
+# 5 : résultat
+
+# R a une large collection de fonctions incluses qui sont appelées de la manière suivante :
+# function_name(arg1 = val1, arg2 = val2, ...)
+
+# Nous avons déjà vu d'autres fonctions dans les exercices précédents : 
+# +, -, *, ^, sqrt(), log() sont des fonctions
+
+sqrt(x = 25)
+log(x = 25)
+sin(x = pi / 2)
+exp(x = 4)
+mean(x = 4)
+
+5^2
+
+5 / 2
+5 %/% 2
+5 %% 2
+
+# Corps de la fonction :
+log
+mean
+methods(mean)
+`+`
+read.csv
+read.table
+
+# Arguments d'une fonction
+log(x = 25)  # `base = exp(1)` par défaut
+log(x = 25, base = 10)
+log10(x = 25)  # équivalent de log(x = 25, base = 10)
+log2(x = 25)  # équivalent de log(x = 25, base = 2)
+
+# Apprendre à utiliser une fonction
+help(log)
+?log
+# curseur + F1
+
+# Aide d'une fonction : 
+# - Description
+# - Usage
+# - Arguments
+
+# Arguments d'une fonction: matching implicite
+log(x = 25, base = 5)
+log(25, 5)  # le 1er argument est `x`, le 2nd `base`
+log(5, 25)  # le 1er argument est `x`, le 2nd `base`
+log(25, base = 5)  # le 1er argument est `x`
+log(base = 5, 25)  # à éviter
+log(base = 5, x = 25)  # si on souhaite inverser l'ordre des arguments, les déclarer explicitement
