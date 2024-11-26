@@ -1,0 +1,66 @@
+---
+title: Pingouins de l'archipel Palmer
+format: html
+toc: true
+toc-title: Table des matières
+execute: 
+  echo: false
+  warning: false
+  message: false
+editor: visual
+editor_options: 
+  chunk_output_type: console
+bibliography: references.bib
+---
+
+```{r}
+library(palmerpenguins)
+library(gt)
+library(ggplot2)
+```
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png){width="60%"}
+
+## Données
+
+Le dataset `penguins` est issu du package [{palmerpenguins}](https://allisonhorst.github.io/palmerpenguins/) [@gorman2014].
+
+Ce dataset contient :
+
+-   `r nrow(penguins)` observations
+
+-   `r ncol(penguins)` variables
+
+```{r}
+gt(head(penguins, 5))
+```
+
+## Analyse
+
+### Nombre d'individus
+
+La @tbl-count représente le nombre d'individus par espèce et par île.
+
+```{r}
+#| label: tbl-count
+#| tbl-cap: Nombre d'individus par espèce et par île
+table(penguins$species, penguins$island)
+```
+
+::: {.callout-tip appearance="simple" icon="false"}
+Seule l'espèce *Adelie* est présente sur les trois îles.
+:::
+
+### Relation entre la longueur et la hauteur du bec
+
+La @fig-bec représente la relation entre ...
+
+```{r}
+#| label: fig-bec
+#| fig-cap: Dimensions du bec
+penguins |>
+  ggplot(aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = species)) +
+  geom_point()
+```
